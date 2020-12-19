@@ -1,7 +1,12 @@
-html, body {
-  margin: 0;
-  padding: 0;
-}
-canvas {
-  display: block;
-}
+body
+
+
+
+    #pin{ width:60px; position: bottom; left:100px; top:100px; }
+    #pin1{ width:60px; position: bottom; left:100px; top:100px; }
+    #pin2{ width:60px; position: middle; left:50px; }
+    #pin3{ width:60px; position: middle; left:40px; top:100px; }
+    #pin4{ width:60px; position: middle; left:20px; top:100px; }
+    #pin5{ width:60px; position: middle; left:70px; top:100px; }
+    #pin6{ width:60px; position: middle; left:20px; top:100px; }
+    #pin7{ width:60px; position: middle; left:70px; top:100px; }
