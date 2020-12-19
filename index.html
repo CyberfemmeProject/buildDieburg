@@ -1,12 +1,261 @@
-<!DOCTYPE html><html lang="en"><head>
-    <script src="p5.js"></script>
-    <script src="p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta charset="utf-8">
+<!DOCTYPE html>
+<html>
+<head>
+<title>H_Da Workshop</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="style.css">
+<style>
+body {font-family: "Times New Roman", Georgia, Serif;}
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Playfair Display";
+  letter-spacing: 1px;
+}
+</style>
 
-  </head>
-  <body>
-    <script src="sketch.js"></script>
-  
 
-</body></html>
+        <script type="text/javascript" src="https://code.jquery.com/jquery.min.js"></script>
+        <script src="https://stephino.github.io/dist/recorder.js"></script>
+        <script>
+            jQuery(document).ready(function () {
+                var $ = jQuery;
+                var myRecorder = {
+                    objects: {
+                        context: null,
+                        stream: null,
+                        recorder: null
+                    },
+                    init: function () {
+                        if (null === myRecorder.objects.context) {
+                            myRecorder.objects.context = new (
+                                    window.AudioContext || window.webkitAudioContext
+                                    );
+                        }
+                    },
+                    start: function () {
+                        var options = {audio: true, video: false};
+                        navigator.mediaDevices.getUserMedia(options).then(function (stream) {
+                            myRecorder.objects.stream = stream;
+                            myRecorder.objects.recorder = new Recorder(
+                                    myRecorder.objects.context.createMediaStreamSource(stream),
+                                    {numChannels: 1}
+                            );
+                            myRecorder.objects.recorder.record();
+                        }).catch(function (err) {});
+                    },
+                    stop: function (listObject) {
+                        if (null !== myRecorder.objects.stream) {
+                            myRecorder.objects.stream.getAudioTracks()[0].stop();
+                        }
+                        if (null !== myRecorder.objects.recorder) {
+                            myRecorder.objects.recorder.stop();
+
+                            // Validate object
+                            if (null !== listObject
+                                    && 'object' === typeof listObject
+                                    && listObject.length > 0) {
+                                // Export the WAV file
+                                myRecorder.objects.recorder.exportWAV(function (blob) {
+                                    var url = (window.URL || window.webkitURL)
+                                            .createObjectURL(blob);
+
+                                    // Prepare the playback
+                                    var audioObject = $('<audio controls></audio>')
+                                            .attr('src', url);
+
+                                    // Prepare the download link
+                                    var downloadObject = $('<a>&#9660;</a>')
+                                            .attr('href', url)
+                                            .attr('download', new Date().toUTCString() + '.wav');
+
+                                    // Wrap everything in a row
+                                    var holderObject = $('<div class="row"></div>')
+                                            .append(audioObject)
+                                            .append(downloadObject);
+
+                                    // Append to the list
+                                    listObject.append(holderObject);
+                                });
+                            }
+                        }
+                    }
+                };
+
+                // Prepare the recordings list
+                var listObject = $('[data-role="recordings"]');
+
+                // Prepare the record button
+                $('[data-role="controls"] > button').click(function () {
+                    // Initialize the recorder
+                    myRecorder.init();
+
+                    // Get the button state
+                    var buttonState = !!$(this).attr('data-recording');
+
+                    // Toggle
+                    if (!buttonState) {
+                        $(this).attr('data-recording', 'true');
+                        myRecorder.start();
+                    } else {
+                        $(this).attr('data-recording', '');
+                        myRecorder.stop(listObject);
+                    }
+                });
+            });
+        </script>
+
+        </head>
+
+<body>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-padding w3-card" style="letter-spacing:4px;">
+    <a href="#home" class="w3-bar-item w3-button">Rebuild Dieburg</a>
+    <!-- Right-sided navbar links. Hide them on small screens -->
+    <div class="w3-right w3-hide-small">
+      <a href="#about" class="w3-bar-item w3-button">About</a>
+      <a href="#menu" class="w3-bar-item w3-button">Workshop</a>
+      <a href="#contact" class="w3-bar-item w3-button">Contact</a>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="w3-display-container w3-content w3-wide" style="max-width:1600px;min-width:500px" id="home">
+
+  <img class="w3-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Aerial_view_of_Berlin_%2832881394137%29.jpg/1599px-Aerial_view_of_Berlin_%2832881394137%29.jpg" alt="Hamburger Catering" width="1600" height="800">
+  <div class="w3-display-bottomleft w3-padding-large w3-opacity">
+    <h1 class="w3-xxlarge">Dieburg Sound Workshop</h1>
+  </div>
+</header>
+
+<!-- Page content -->
+<div class="w3-content" style="max-width:1100px">
+
+  <!-- About Section -->
+  <div class="w3-row w3-padding-64" id="about">
+    <div class="w3-col m6 w3-padding-large w3-hide-small">
+     <img src="rebuild.png" class="w3-round w3-image w3-opacity-min" alt="picture" width="600" height="750">
+     <img src="rebuild2.png" class="w3-round w3-image w3-opacity-min" alt="picture2" width="600" height="750">
+    </div>
+
+    <div class="w3-col m6 w3-padding-large">
+      <h1 class="w3-center">Introduction</h1><br>
+      <h5 class="w3-center">Main Idea</h5>
+      <p class="w3-large">
+        Being inspired by R Murray Schafer and his Soundscape
+        theory we decided to think wider and apply it for the scale of the city. We provide an opportunity for
+        the audience to experiment with a map (locate some places on the map of Dieburg) and to create a sound composition of
+        the city together. The following step will be to ask them to associate these places with colors.
+        <br>Our goal is to <span class="w3-tag w3-light-grey">experience sounds environment and compose </span> the city Dieburg.
+         </p>
+      <p class="w3-large w3-text-grey w3-hide-medium">
+        We offer the participants to create a unique sound map of Dieburg with the set of existing places,
+        <br>for example:
+        <br>
+
+● Train station<br>
+● Cinema<br>
+● Church<br>
+● Swimming pool<br>
+<br>
+And some places brand new for the city. Such as:<br>
+● Art gallery<br>
+● Media Art Hall<br>
+● Theater<br>
+● Free Art area<br>
+<br>
+
+      </p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Menu Section -->
+  <div class="w3-row w3-padding-64" id="menu">
+    <div class="w3-col l6 w3-padding-large">
+      <h1 class="w3-center">let's play!</h1><br>
+      <h4>Bell</h4>
+      <img src="https://pngriver.com/wp-content/uploads/2018/04/Download-Pin-Map-Church-Logo-Png-Image-96327-For-Designing-Projects.png" id="pin">
+      <p class="w3-text-grey">
+        Assortment of fresh baked fruit breads and muffins 5.50</p><br>
+
+      <h4>Machine</h4>
+      <p class="w3-text-grey">
+        <img src="https://cdn.onlinewebfonts.com/svg/img_465535.png" id="pin1"><br>
+        Natural cereal of honey toasted oats, raisins, almonds and dates 7.00</p><br>
+
+      <h4>tik tok tik tok</h4>
+      <img src="map.png" id="pin2">
+      <p class="w3-text-grey">Vanilla flavored batter with malted flour 7.50</p><br>
+
+      <h4>Water</h4>
+      <img src="map.png" id="pin3">
+      <p class="w3-text-grey">Scrambled eggs, roasted red pepper and garlic, with green onions 7.50</p><br>
+
+      <h4>Drill</h4>
+      <img src="map.png" id="pin4"">
+      <p class="w3-text-grey">With syrup, butter and lots of berries 8.50</p>
+
+      <audio id="testMusic">
+          <source src="bell.mp3" type="audio/mpeg">
+        <audio id="machine">
+            <source src="https://t1.daumcdn.net/cfile/tistory/115DFA244BFF33C713?original" type="audio/mpeg">
+        <audio id="rain2">
+            <source src="rain2.mp3" type="audio/mpeg">
+        <audio id="clock">
+            <source src="https://t1.daumcdn.net/cfile/tistory/999E13495CFA78E524?original" type="audio/mpeg" >
+        <audio id="bell">
+            <source src="bell.mp3" type="audio/mpeg" >
+        <audio id="people">
+            <source src="people.mp3" type="audio/mpeg" >
+        <audio id="drill">
+            <source src="drill.mp3" type="audio/mpeg" >
+
+            </audio>
+    </div>
+
+          <div class="w3-col l6 w3-padding-large">
+                <img src="dieburg 2.png" class="w3-round w3-image w3-opacity-min" alt="Dieburg" style="width:100%">
+
+
+
+  </div>
+
+
+  </div>
+
+  <hr>
+
+  <!-- Contact Section -->
+
+
+  <div class="w3-container w3-padding-64" id="contact">
+    <h1>Contact</h1><br>
+    <p>We offer full-service catering for any event, large or small. We understand your needs and we will cater the food to satisfy the biggerst criteria of them all, both look and taste. Do not hesitate to contact us.</p>
+    <p class="w3-text-blue-grey w3-large"><b>Catering Service, 42nd Living St, 43043 New York, NY</b></p>
+    <p>You can also contact us by phone 00553123-2323 or email catering@catering.com, or you can send us a message here:</p>
+    <form action="/action_page.php" target="_blank">
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Name" required name="Name"></p>
+      <p><input class="w3-input w3-padding-16" type="number" placeholder="How many people" required name="People"></p>
+      <p><input class="w3-input w3-padding-16" type="datetime-local" placeholder="Date and time" required name="date" value="2020-11-16T20:00"></p>
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Message \ Special requirements" required name="Message"></p>
+      <p><button class="w3-button w3-light-grey w3-section" type="submit">SEND MESSAGE</button></p>
+    </form>
+
+
+<!-- End page content -->
+</div>
+
+<!-- Footer -->
+<footer class="w3-center w3-light-grey w3-padding-32">
+  <p>Hochschule Darmstadt IMC <a href="https://staging.medienkultur.eu/" title="W3.CSS" target="_blank" class="w3-hover-text-green">medienkultur.eu</a></p>
+</footer>
+
+<script src="audiofunction.js"></script>
+
+</body>
+</html>
